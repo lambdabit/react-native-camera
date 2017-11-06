@@ -195,8 +195,8 @@ class RCTCameraViewFinder extends TextureView implements TextureView.SurfaceText
                     _camera.stopPreview();
                     // stop sending previews to `onPreviewFrame`
                     _camera.setPreviewCallback(null);
-                    RCTCamera.getInstance().releaseCameraInstance(_cameraType);
                     _camera = null;
+                    RCTCamera.getInstance().releaseCameraInstance(_cameraType);
                 }
 
             } catch (Exception e) {
@@ -370,7 +370,19 @@ class RCTCameraViewFinder extends TextureView implements TextureView.SurfaceText
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // Get the pointer ID
-        Camera.Parameters params = _camera.getParameters();
+        Camera.Parameters params;
+
+        try {
+            params = _camera.getParameters();
+            if (params == null) {
+                return true;
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return true;
+        }
+
+
         int action = event.getAction();
 
 
